@@ -1,75 +1,57 @@
 <template>
   <div class="home-page">
-    <section class="hero">
+    <section class="hero-section">
       <div class="hero-content">
-        <span class="badge">Welcome to Gatherly</span>
-        <h1 class="hero-title">Connect, Discover, and Experience</h1>
+        <h1 class="hero-title">
+          Connect, Discover, and<br />
+          Experience
+        </h1>
         <p class="hero-subtitle">
-          Join our vibrant community to explore the best events tailored for you. Lorem ipsum
-          dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
-          et dolore magna aliqua.
+          A community event platform designed to bring ideas together.<br />
+          Discover hundreds of events near you.
         </p>
-        <div class="hero-actions">
-          <router-link to="/browse/events" class="btn btn-primary">Discover Events</router-link>
-          <router-link to="/about" class="btn btn-secondary">Learn More</router-link>
+        <div class="hero-action">
+          <router-link to="/browse/events" class="btn-primary">Discover Events</router-link>
         </div>
       </div>
     </section>
 
-    <section class="features">
-      <div class="feature-card" v-for="i in 3" :key="i">
-        <div class="feature-icon">{{ ['🎫', '🌍', '🤝'][i - 1] }}</div>
-        <h3>{{ ['Curated Events', 'Global Reach', 'Community Driven'][i - 1] }}</h3>
-        <p>
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-          commodo consequat.
-        </p>
+    <section class="features-section">
+      <div class="features-header">
+        <h2>Why Choose Gatherly?</h2>
+        <p>Everything you need to host or attend unforgettable events.</p>
       </div>
-    </section>
 
-    <section class="sitemap-visual">
-      <h2>Website Structure / Site-Map</h2>
-      <p class="sitemap-desc">
-        A quick overview of how this application is structured via Vue Router.
-      </p>
-      <ul class="tree">
-        <li>
-          <router-link to="/">Home</router-link>
-          <ul>
-            <li><router-link to="/about">About</router-link></li>
-            <li>
-              <router-link to="/browse">Browse</router-link>
-              <ul>
-                <li>
-                  <router-link to="/browse/events">Event List</router-link>
-                  <ul>
-                    <li>
-                      <router-link to="/browse/events/1">Event Detail (Example)</router-link>
-                    </li>
-                  </ul>
-                </li>
-                <li><router-link to="/browse/category">Category</router-link></li>
-              </ul>
-            </li>
-            <li><router-link to="/contact">Contact</router-link></li>
-          </ul>
-        </li>
-      </ul>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Discover Easily</h3>
+          <p>Find events tailored to your interests using our smart category and location filters.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎟️</div>
+          <h3>Seamless Ticketing</h3>
+          <p>Register with one click and get your digital QR ticket instantly on your device.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Host Like a Pro</h3>
+          <p>Manage attendees, track revenue, and scan QR codes with our comprehensive dashboard.</p>
+        </div>
+      </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.home-page {
-  display: flex;
-  flex-direction: column;
-  gap: 4rem;
-  animation: fadeIn 0.5s ease;
-}
-
-.hero {
+.hero-section {
+  /* The Fold & Centered Hero Card */
+  min-height: 70vh;
   display: flex;
   justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 5rem 2rem;
   background: #fdfdfd;
@@ -85,24 +67,13 @@
   align-items: center;
 }
 
-.badge {
-  display: inline-block;
-  padding: 0.5rem 1.2rem;
-  background: rgba(102, 68, 255, 0.08);
-  color: #6644ff;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
-  letter-spacing: 0.5px;
-}
-
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3.8rem;
   font-weight: 800;
   line-height: 1.2;
   color: #1c1948;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
@@ -113,27 +84,41 @@
   max-width: 600px;
 }
 
-.hero-actions {
+.hero-action {
   display: flex;
-  gap: 1rem;
-}
-
-.btn {
-  padding: 0.8rem 2rem;
-  border-radius: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  justify-content: center;
 }
 
 .btn-primary {
+  display: inline-block;
+  padding: 0.9rem 2.4rem;
+  font-size: 1.05rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
   background: #6644ff;
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 68, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(102, 68, 255, 0.35);
+  transition: all 0.3s ease;
 }
 .btn-primary:hover {
   background: #5533ee;
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 68, 255, 0.45);
+}
+
+.features-grid {
+  /* Grid System layout for feature cards */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-8);
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  animation: fadeIn 0.5s ease;
 }
 
 .btn-secondary {
