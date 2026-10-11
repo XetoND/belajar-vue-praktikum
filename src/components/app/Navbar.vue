@@ -1,9 +1,17 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const isScrolled = ref(false)
+const isMobileMenuOpen = ref(false)
 const route = useRoute()
+
+watch(
+  () => route.path,
+  () => {
+    isMobileMenuOpen.value = false
+  },
+)
 
 const menus = [
   { name: 'Home', path: '/' },
@@ -21,6 +29,7 @@ const menus = [
     ],
   },
   { name: 'Contact', path: '/contact' },
+  { name: 'Organizer Dashboard', path: '/dashboard' },
 ]
 
 const handleScroll = () => {
@@ -53,7 +62,7 @@ onUnmounted(() => {
         <span class="logo-text">Gatherly</span>
       </router-link>
 
-      <ul class="nav-menu">
+      <ul class="nav-menu" :class="{ open: isMobileMenuOpen }">
         <li class="nav-item" v-for="menu in menus" :key="menu.name">
           <router-link
             :to="menu.path"
@@ -148,7 +157,7 @@ onUnmounted(() => {
           </svg>
         </div>
 
-        <button class="hamburger-btn">
+        <button class="hamburger-btn" @click="isMobileMenuOpen = !isMobileMenuOpen" aria-label="Toggle navigation">
           <svg
             width="24"
             height="24"
@@ -396,8 +405,42 @@ onUnmounted(() => {
   }
 }
 @media (max-width: 768px) {
+  .hamburger-btn {
+    display: flex;
+  }
   .nav-menu {
     display: none;
+  }
+  .nav-menu.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #1c1948;
+    padding: 1rem 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    align-items: stretch;
+    gap: 0.5rem;
+    z-index: 1000;
+  }
+  .nav-menu.open .nav-item {
+    width: 100%;
+    padding: 0.25rem 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nav-menu.open .nav-link {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .nav-menu.open .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 0.5rem;
   }
   .lang-selector {
     display: none;
