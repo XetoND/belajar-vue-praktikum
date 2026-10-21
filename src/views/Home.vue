@@ -16,6 +16,9 @@ import AppCard from '@/components/ui/AppCard.vue'
           <AppButton variant="primary" @click="$router.push('/browse/events')">
             Discover Events
           </AppButton>
+          <AppButton variant="outline" @click="$router.push('/mini-game')">
+            Play Mini Game
+          </AppButton>
         </div>
       </div>
     </section>
@@ -86,6 +89,14 @@ import AppCard from '@/components/ui/AppCard.vue'
   color: var(--text-muted);
   margin-bottom: var(--space-8);
   max-width: 600px;
+}
+
+.hero-action {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 /* --- NEW FEATURES SECTION --- */

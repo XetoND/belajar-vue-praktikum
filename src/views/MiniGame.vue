@@ -1,0 +1,165 @@
+<script setup>
+import { ref } from 'vue'
+
+const score = ref(0);
+
+const pesan = ref('Klik target untuk menambah skor!');
+
+function KlikTarget() {
+  score.value ++
+  pesan.value = `Mantap Kamu Mendapatkan Skor ${score.value}`;
+}
+
+function ResetSkor() {
+  score.value = 0;
+  pesan.value = 'Klik target untuk menambah skor!';
+}
+
+</script>
+
+<template>
+  <main class="game-container">
+    <section class="game-card">
+      <p class="label">Mini Game Vue.js</p>
+      <h1>Mini Game Klik</h1>
+      <p class="description">Klik pada target untuk menambah skor!</p>
+      <div class="score-box">
+        <span>Skor Kamu</span>
+        <strong>{{ score }}</strong> 
+      </div>
+
+      <button class="target" @click="KlikTarget">Klik Target</button>
+      <p class="message">{{ pesan }}</p>
+
+      <button class="reset" @click="ResetSkor">Reset Skor</button>
+      <p v-if="score >= 10" class="winner">Selamat! Kamu sudah mendapatkan 10 poin skor!</p>
+    </section>
+  </main>
+</template>
+
+<style scoped>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #dbeafe, #fce7f3);
+  color: #1e293b;
+}
+
+.game-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.game-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 35px 25px;
+  text-align: center;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 15px 40px #33415520;
+}
+
+.label {
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+h1 {
+  margin: 16px 0;
+  font-size: 35px;
+}
+
+.description {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.score-box {
+  margin: 25px 0;
+  padding: 18px;
+  background: #eef2ff;
+  border-radius: 16px;
+}
+
+.score-box span {
+  display: block;
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.score-box strong {
+  display: block;
+  margin-top: 8px;
+  color: #4338ca;
+  font-size: 48px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+.target {
+  background: #6366f1;
+  color: white;
+}
+
+.target:hover {
+  background: #4f46e5;
+}
+
+.message {
+  margin: 20px 0;
+  color: #475569;
+}
+
+.reset {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.reset:hover {
+  background: #e2e8f0;
+}
+
+.winner {
+  margin-top: 20px;
+  padding: 12px;
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .game-card {
+    padding: 28px 18px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+}
+</style>
