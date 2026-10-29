@@ -16,9 +16,6 @@ import AppCard from '@/components/ui/AppCard.vue'
           <AppButton variant="primary" @click="$router.push('/browse/events')">
             Discover Events
           </AppButton>
-          <AppButton variant="outline" @click="$router.push('/mini-game')">
-            Play Mini Game
-          </AppButton>
         </div>
       </div>
     </section>
