@@ -39,25 +39,41 @@ const routes = [
             meta: { breadcrumb: 'Event Detail' }
           },
           {
+            path: 'events/:id/register',
+            name: 'event-registration',
+            component: () => import('@/views/EventRegistration.vue'),
+            meta: { breadcrumb: 'Register Event' }
+          },
+          {
             path: 'category',
             name: 'category',
             component: () => import('@/views/Category.vue'),
             meta: { breadcrumb: 'Category' }
+          },
+          {
+            path: 'your-events',
+            name: 'your-events',
+            component: () => import('@/views/YourEvents.vue'),
+            meta: { breadcrumb: 'Your Events' }
+          },
+          {
+            path: 'your-events/:id',
+            name: 'ticket-receipt',
+            component: () => import('@/views/TicketReceipt.vue'),
+            meta: { breadcrumb: 'Ticket Receipt' }
           }
         ]
+      },
+      {
+        path: 'your-events',
+        redirect: '/browse/your-events'
       },
       {
         path: 'contact',
         name: 'contact',
         component: () => import('@/views/Contact.vue'),
         meta: { breadcrumb: 'Contact' }
-      },
-      {
-        path: 'mini-game',
-        name: 'mini-game',
-        component: () => import('@/views/MiniGame.vue'),
-        meta: { breadcrumb: 'Mini Game' },
-      },
+      }
     ]
   },
   {
@@ -76,12 +92,23 @@ const routes = [
         component: () => import('@/views/EventManagement.vue')
       }
     ]
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
 })
 
 export default router
