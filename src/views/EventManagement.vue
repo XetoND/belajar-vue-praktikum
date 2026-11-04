@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useEvents } from '@/composables/useEvents';
 import AppModal from '@/components/ui/AppModal.vue';
@@ -13,15 +13,27 @@ const {
   completedEvents,
   createEvent,
   completeEvent,
-  deleteEvent
+  deleteEvent,
+  fetchEvents,
+  loading,
+  error
 } = useEvents();
 
+// KONDISI TAB AKTIF: 'active' | 'create' | 'completed'
 const currentTab = ref('active');
 
 // MODAL STATE FOR ACTIONS (Complete & Delete)
 const isModalOpen = ref(false);
 const modalAction = ref('complete'); // 'complete' | 'delete'
 const selectedEvent = ref(null);
+const isProcessingAction = ref(false);
+
+const createFormRef = ref(null);
+const isSubmitting = ref(false);
+
+onMounted(() => {
+  fetchEvents();
+});
 
 const handleOpenCompleteModal = (event) => {
   selectedEvent.value = event;
@@ -35,16 +47,21 @@ const handleOpenDeleteModal = (event) => {
   isModalOpen.value = true;
 };
 
-const handleConfirmModal = () => {
+const handleConfirmModal = async () => {
   if (selectedEvent.value) {
-    if (modalAction.value === 'complete') {
-      completeEvent(selectedEvent.value.id);
-    } else if (modalAction.value === 'delete') {
-      deleteEvent(selectedEvent.value.id);
+    isProcessingAction.value = true;
+    try {
+      if (modalAction.value === 'complete') {
+        await completeEvent(selectedEvent.value.id);
+      } else if (modalAction.value === 'delete') {
+        await deleteEvent(selectedEvent.value.id);
+      }
+    } finally {
+      isProcessingAction.value = false;
+      isModalOpen.value = false;
+      selectedEvent.value = null;
     }
   }
-  isModalOpen.value = false;
-  selectedEvent.value = null;
 };
 
 const handleCancelModal = () => {
@@ -52,12 +69,20 @@ const handleCancelModal = () => {
   selectedEvent.value = null;
 };
 
-// HANDLER EVENT DIBUAT DARI EventCreateForm
-const handleCreateEvent = (eventData) => {
-  createEvent(eventData);
-  setTimeout(() => {
+// HANDLER EVENT DIBUAT DARI EventCreateForm SECARA ASINKRON (POST KE REST API)
+const handleCreateEvent = async (eventData) => {
+  isSubmitting.value = true;
+  try {
+    await createEvent(eventData);
+    if (createFormRef.value) {
+      createFormRef.value.resetForm();
+    }
     currentTab.value = 'active';
-  }, 1000);
+  } catch (err) {
+    alert(err.message || 'Gagal menyimpan acara ke server REST API');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 
@@ -96,7 +121,7 @@ const handleCreateEvent = (eventData) => {
     </div>
 
     <!-- TAB 1: ACTIVE EVENTS LIST -->
-    <section v-if="currentTab === 'active'">
+    <section v-if="currentTab === 'active'" class="tab-pane">
       <div v-if="activeEvents.length > 0" class="events-grid">
         <OrganizerEventCard
           v-for="item in activeEvents"
@@ -120,15 +145,17 @@ const handleCreateEvent = (eventData) => {
     </section>
 
     <!-- TAB 2: CREATE EVENT FORM -->
-    <section v-if="currentTab === 'create'">
+    <section v-if="currentTab === 'create'" class="tab-pane">
       <EventCreateForm
+        ref="createFormRef"
+        :submitting="isSubmitting"
         @submit="handleCreateEvent"
         @cancel="currentTab = 'active'"
       />
     </section>
 
     <!-- TAB 3: COMPLETED EVENTS (ARCHIVE) -->
-    <section v-if="currentTab === 'completed'">
+    <section v-if="currentTab === 'completed'" class="tab-pane">
       <div v-if="completedEvents.length > 0" class="events-grid">
         <OrganizerEventCard
           v-for="item in completedEvents"
@@ -228,7 +255,6 @@ const handleCreateEvent = (eventData) => {
   margin-bottom: var(--space-12);
 }
 
-/* EMPTY STATE */
 .empty-state {
   text-align: center;
   padding: var(--space-12);
