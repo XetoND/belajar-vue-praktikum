@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useEvents } from '@/composables/useEvents';
 import AppButton from '@/components/ui/AppButton.vue';
@@ -7,7 +7,7 @@ import AppCard from '@/components/ui/AppCard.vue';
 
 const route = useRoute();
 const router = useRouter();
-const { getEventById, isUserRegistered } = useEvents();
+const { getEventById, isUserRegistered, fetchEventById, loading, error } = useEvents();
 
 // MENGAMBIL DATA EVENT DINAMIS DARI STATE BERDASARKAN ID DI URL
 const event = computed(() => getEventById(route.params.id));
@@ -15,6 +15,13 @@ const event = computed(() => getEventById(route.params.id));
 // CEK APAKAH PENGGUNA SUDAH TERDAFTAR DI EVENT INI
 const isRegistered = computed(() => {
   return event.value ? isUserRegistered(event.value.id) : false;
+});
+
+// PASTIKAN DATA DIAMBIL DARI REST API JIKA USER LANGSUNG MASUK KE URL DETAIL
+onMounted(async () => {
+  if (!event.value) {
+    await fetchEventById(route.params.id);
+  }
 });
 </script>
 
@@ -24,8 +31,15 @@ const isRegistered = computed(() => {
       &larr; Back to Events
     </button>
 
-    <!-- KONDISI JIKA EVENT DITEMUKAN -->
-    <div v-if="event">
+    <!-- KONDISI 1: LOADING DETAIL ACARA DARI SERVER -->
+    <div v-if="loading" class="not-found-card">
+      <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500;">
+        Memuat rincian acara dari server...
+      </p>
+    </div>
+
+    <!-- KONDISI 2: DATA EVENT DITEMUKAN -->
+    <div v-else-if="event">
       <div class="detail-header">
         <div class="header-tags">
           <span class="event-tag">{{ event.cat }}</span>
@@ -124,10 +138,10 @@ const isRegistered = computed(() => {
       </div>
     </div>
 
-    <!-- EMPTY STATE IF ID NOT FOUND -->
+    <!-- KONDISI 3: EMPTY / ERROR STATE IF ID NOT FOUND -->
     <div v-else class="not-found-card">
       <h2>404 - Event Not Found</h2>
-      <p>The event you are looking for is unavailable or has been removed by the organizer.</p>
+      <p>{{ error || 'The event you are looking for is unavailable or has been removed by the organizer.' }}</p>
       <AppButton variant="primary" @click="router.push('/browse/events')">
         Back to Event Catalog
       </AppButton>
@@ -225,6 +239,10 @@ const isRegistered = computed(() => {
   font-size: 1.05rem;
 }
 
+.meta-item strong {
+  color: var(--text-main);
+}
+
 /* ASYMMETRICAL GRID */
 .grid-asymmetric {
   display: grid;
@@ -259,28 +277,26 @@ const isRegistered = computed(() => {
 }
 
 .ticket-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: var(--space-2);
+  font-size: 1.4rem;
+  margin-bottom: var(--space-3);
+  color: var(--text-main);
 }
 
 .ticket-desc {
   color: var(--text-muted);
   margin-bottom: var(--space-6);
   line-height: 1.5;
+  font-size: 0.95rem;
 }
 
-.text-success {
-  color: #15803d !important;
-  font-weight: 600;
+.ticket-desc.text-success {
+  color: #15803d;
+  font-weight: 500;
 }
 
-.text-warning {
-  color: #b91c1c !important;
-  font-weight: 600;
-}
-
-.action-buttons {
-  width: 100%;
+.ticket-desc.text-warning {
+  color: #b91c1c;
+  font-weight: 500;
 }
 
 .btn-register {
@@ -314,7 +330,6 @@ const isRegistered = computed(() => {
   text-decoration: none;
   display: inline-block;
   transition: color 0.2s;
-  text-align: center;
 }
 
 .view-receipt-link:hover {
